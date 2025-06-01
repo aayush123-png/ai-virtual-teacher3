@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Virtual Teacher - Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="light-theme">
+  <div class="theme-toggle">
+    <label>
+      <input type="checkbox" id="themeSwitch" />
+      Toggle Dark Mode
+    </label>
+  </div>
+
+  <div class="container">
+    <h1>AI Virtual Teacher</h1>
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="Enter Email" required />
+      <input type="password" id="password" placeholder="Enter Password" required />
+      <button type="submit">Login</button>
+      <p><a href="signup.html">Don't have an account? Sign up</a></p>
+      <p><a href="#" onclick="showResetForm()">Forgot Password?</a></p>
+    </form>
+
+    <form id="resetForm" style="display:none;">
+      <input type="email" id="resetEmail" placeholder="Enter your Email" required />
+      <button type="button" onclick="sendResetOTP()">Send OTP</button>
+      <input type="text" id="enteredOtp" placeholder="Enter OTP" />
+      <input type="password" id="newPassword" placeholder="Enter New Password" />
+      <button type="button" onclick="resetPassword()">Reset Password</button>
+      <p><a href="#" onclick="hideResetForm()">Back to Login</a></p>
+    </form>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

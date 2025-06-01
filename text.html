@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Text Mode - AI Virtual Teacher</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="chat-container">
+    <div id="chatBox"></div>
+    <input type="text" id="userInput" placeholder="Ask a question..." />
+    <button onclick="sendText()">Send</button>
+  </div>
+
+  <script>
+    async function sendText() {
+      const userMessage = document.getElementById("userInput").value;
+      document.getElementById("chatBox").innerHTML += `<div>You: ${userMessage}</div>`;
+
+      const response = await fetch("https://631db2fc-c507-43eb-ac0b-3f5ea1cb7f83-00-29kiedd034ze2.sisko.repl.co/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userMessage })
+      });
+
+      const data = await response.json();
+      document.getElementById("chatBox").innerHTML += `<div>Teacher: ${data.reply}</div>`;
+    }
+  </script>
+</body>
+</html>
