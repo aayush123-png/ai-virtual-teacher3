@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome - AI Teacher</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h2>Welcome to Your AI Teacher</h2>
+    <form id="nameForm">
+      <input type="text" id="userInput" placeholder="Ask me anything..." required>
+      <button type="submit">Ask</button>
+    </form>
+    <div id="aiReply" style="margin-top: 20px;"></div>
+  </div>
+
+  <script>
+    document.getElementById('nameForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const msg = document.getElementById('userInput').value;
+      document.getElementById('aiReply').innerText = "Thinking...";
+      const reply = await askAI(msg);
+      document.getElementById('aiReply').innerText = reply;
+    });
+  </script>
+</body>
+</html>
