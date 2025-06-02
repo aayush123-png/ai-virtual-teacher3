@@ -1,1 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Doubt Solver - AI Teacher</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="light-theme">
+  <div class="container">
+    <h2>Ask Your Doubt</h2>
+    <div class="mode-buttons">
+      <button onclick="startVoice()">🎤 Speak</button>
+      <button onclick="startText()">⌨️ Type</button>
+      <button onclick="document.getElementById('imgInput').click()">📸 Upload Image</button>
+    </div>
+    <input type="file" id="imgInput" accept="image/*" style="display:none;" />
+    <div id="resultBox" class="reply-box" style="margin-top:20px;"></div>
+  </div>
 
+  <script>
+    function startVoice() {
+      alert("Coming Soon: Voice doubt recognition");
+    }
+
+    function startText() {
+      const doubt = prompt("Type your doubt:");
+      if (!doubt) return;
+      fetch("https://ai-virtual-teacher3.onrender.com/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userMessage: doubt })
+      }).then(res => res.json()).then(data => {
+        document.getElementById("resultBox").innerText = "AI: " + data.reply;
+      });
+    }
+
+    document.getElementById("imgInput").onchange = async function(e) {
+      const file = e.target.files[0];
+      alert("Coming soon: Image doubt handling via OCR or image-to-text!");
+      // You can integrate OCR/ImgBB and GPT processing later here
+    };
+  </script>
+</body>
+</html>
