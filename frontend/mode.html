@@ -1,15 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Select Mode - AI Virtual Teacher</title>
+  <meta charset="UTF-8" />
+  <title>Select Mode - AI Teacher</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="light-theme">
   <div class="container">
-    <h2>Choose Interaction Mode</h2>
-    <button onclick="window.location.href='voice.html'">Voice Mode</button>
-    <button onclick="window.location.href='text.html'">Text Mode</button>
+    <h2>Choose How You Want to Learn</h2>
+    <p>This AI teacher can talk or chat with you. Choose a mode:</p>
+
+    <div class="mode-buttons">
+      <a href="voice.html"><button>🎙️ Voice Mode</button></a>
+      <a href="text.html"><button>💬 Text Mode</button></a>
+    </div>
+
+    <div class="prompt-box">
+      <h4>Before we begin, let’s personalize your session:</h4>
+      <form id="setupForm">
+        <input type="text" id="chapter" placeholder="Which chapter?" required />
+        <select id="questionType">
+          <option value="mcq">MCQ</option>
+          <option value="fill">Fill in the Blanks</option>
+          <option value="hots">HOTS</option>
+        </select>
+        <button type="submit">Start Learning</button>
+      </form>
+    </div>
   </div>
+
+  <script>
+    document.getElementById("setupForm").onsubmit = function(e) {
+      e.preventDefault();
+      const chapter = document.getElementById("chapter").value;
+      const type = document.getElementById("questionType").value;
+      const prompt = `Let's discuss Chapter: ${chapter}. Start asking ${type} questions.`;
+      localStorage.setItem("initialPrompt", prompt);
+      alert("Starting session with prompt: " + prompt);
+    };
+  </script>
 </body>
 </html>
