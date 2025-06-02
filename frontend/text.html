@@ -2,30 +2,57 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Text Mode - AI Virtual Teacher</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Text Chat - AI Teacher</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div class="chat-container">
-    <div id="chatBox"></div>
-    <input type="text" id="userInput" placeholder="Ask a question..." />
-    <button onclick="sendText()">Send</button>
+<body class="light-theme">
+  <div class="container">
+    <h2>Chat with AI Teacher</h2>
+    <div id="chatHistory" class="reply-box" style="height: 300px; overflow-y: auto;"></div>
+    <form id="textForm">
+      <input type="text" id="question" placeholder="Ask your question..." required />
+      <button type="submit">Send</button>
+    </form>
   </div>
 
   <script>
-    async function sendText() {
-      const userMessage = document.getElementById("userInput").value;
-      document.getElementById("chatBox").innerHTML += `<div>You: ${userMessage}</div>`;
+    const chatBox = document.getElementById("chatHistory");
+    const chatKey = "textChatHistory";
 
-      const response = await fetch("https://631db2fc-c507-43eb-ac0b-3f5ea1cb7f83-00-29kiedd034ze2.sisko.repl.co/", {
+    // Load old chat
+    const old = JSON.parse(localStorage.getItem(chatKey)) || [];
+    old.forEach(({ role, text }) => {
+      const el = document.createElement("p");
+      el.textContent = `${role === 'user' ? "You" : "AI"}: ${text}`;
+      chatBox.appendChild(el);
+    });
+
+    document.getElementById("textForm").onsubmit = async function(e) {
+      e.preventDefault();
+      const input = document.getElementById("question").value;
+      const userLine = document.createElement("p");
+      userLine.textContent = "You: " + input;
+      chatBox.appendChild(userLine);
+
+      const res = await fetch("https://ai-virtual-teacher3.onrender.com/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userMessage })
+        body: JSON.stringify({ userMessage: input })
       });
+      const data = await res.json();
 
-      const data = await response.json();
-      document.getElementById("chatBox").innerHTML += `<div>Teacher: ${data.reply}</div>`;
-    }
+      const aiLine = document.createElement("p");
+      aiLine.textContent = "AI: " + data.reply;
+      chatBox.appendChild(aiLine);
+
+      // Save both lines to history
+      const history = JSON.parse(localStorage.getItem(chatKey)) || [];
+      history.push({ role: 'user', text: input }, { role: 'ai', text: data.reply });
+      localStorage.setItem(chatKey, JSON.stringify(history));
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+      document.getElementById("question").value = "";
+    };
   </script>
 </body>
 </html>
