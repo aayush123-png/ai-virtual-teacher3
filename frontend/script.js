@@ -1,59 +1,55 @@
-const backendUrl = "https://ai-virtual-teacher3.onrender.com";
+// Theme toggle
+document.getElementById('themeSwitch')?.addEventListener('change', function () {
+  document.body.classList.toggle('dark-theme', this.checked);
+});
 
-// Theme Switch (if theme switcher exists)
-const themeSwitch = document.getElementById('themeSwitch');
-if (themeSwitch) {
-  themeSwitch.addEventListener('change', function () {
-    document.body.classList.toggle('dark-theme', this.checked);
-  });
-}
+// Login logic
+document.getElementById("loginForm")?.addEventListener("submit", function(e) {
+  e.preventDefault();
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const users = JSON.parse(localStorage.getItem("users")) || {};
+  if (users[email] && users[email] === password) {
+    alert("Login successful!");
+    window.location.href = "mode.html";
+  } else {
+    alert("Incorrect credentials.");
+  }
+});
 
-// Show/hide reset form
-function showResetForm() {
-  document.getElementById('loginForm').style.display = 'none';
-  document.getElementById('resetForm').style.display = 'block';
-}
-
-function hideResetForm() {
-  document.getElementById('resetForm').style.display = 'none';
-  document.getElementById('loginForm').style.display = 'block';
-}
-
-// Send OTP via Gmail (calls backend)
+// Reset password
 async function sendResetOTP() {
-  const email = document.getElementById('resetEmail').value;
-  const res = await fetch(`${backendUrl}/send-otp`, {
+  const email = document.getElementById("resetEmail").value;
+  const response = await fetch("https://ai-virtual-teacher3.onrender.com/send-otp", {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email })
   });
-  const data = await res.json();
-  alert(data.message || "OTP Sent");
+  const data = await response.json();
+  alert(data.message || "OTP sent!");
 }
 
-// Reset password (calls backend)
 async function resetPassword() {
-  const email = document.getElementById('resetEmail').value;
-  const otp = document.getElementById('enteredOtp').value;
-  const newPassword = document.getElementById('newPassword').value;
+  const email = document.getElementById("resetEmail").value;
+  const otp = document.getElementById("enteredOtp").value;
+  const newPassword = document.getElementById("newPassword").value;
 
-  const res = await fetch(`${backendUrl}/reset-password`, {
+  const response = await fetch("https://ai-virtual-teacher3.onrender.com/reset-password", {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, otp, newPassword })
   });
 
-  const data = await res.json();
-  alert(data.message || "Password reset!");
+  const data = await response.json();
+  alert(data.message || "Password updated!");
 }
 
-// Example: Send user message to AI (you can attach to a form)
-async function askAI(message) {
-  const response = await fetch(`${backendUrl}/ask`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userMessage: message })
-  });
-  const data = await response.json();
-  return data.reply;
+// Show/hide reset forms
+function showResetForm() {
+  document.getElementById("loginForm").style.display = "none";
+  document.getElementById("resetForm").style.display = "block";
+}
+function hideResetForm() {
+  document.getElementById("resetForm").style.display = "none";
+  document.getElementById("loginForm").style.display = "block";
 }
