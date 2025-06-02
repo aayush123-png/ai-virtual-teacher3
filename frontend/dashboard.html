@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome - AI Virtual Teacher</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="light-theme">
+  <div class="container">
+    <h2>Welcome Back, Learner!</h2>
+    <p>Please tell your AI teacher what you want to learn today.</p>
+
+    <form id="startForm">
+      <input type="text" id="chapterInput" placeholder="Enter chapter name (e.g., Motion)" required />
+      <select id="typeInput" required>
+        <option value="">Select question type</option>
+        <option value="MCQ">MCQ</option>
+        <option value="Fill in the blanks">Fill in the blanks</option>
+        <option value="HOTS">HOTS</option>
+        <option value="Conceptual">Conceptual</option>
+      </select>
+      <button type="submit">Start Session</button>
+    </form>
+
+    <div class="mode-buttons" style="margin-top: 30px;">
+      <a href="text.html"><button>💬 Go to Text Mode</button></a>
+      <a href="voice.html"><button>🎙️ Go to Voice Mode</button></a>
+      <a href="doubt.html"><button>❓ Ask a Doubt</button></a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("startForm").onsubmit = async function(e) {
+      e.preventDefault();
+      const chapter = document.getElementById("chapterInput").value;
+      const type = document.getElementById("typeInput").value;
+      const prompt = `Let's start discussing Chapter: ${chapter}. Ask me some ${type} questions.`;
+
+      // Save to localStorage for reference
+      localStorage.setItem("initialPrompt", prompt);
+
+      // Send to GPT backend
+      await fetch("https://ai-virtual-teacher3.onrender.com/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userMessage: prompt })
+      });
+
+      alert("Session initialized! Now choose how you want to learn.");
+    };
+  </script>
+</body>
+</html>
