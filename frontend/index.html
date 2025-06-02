@@ -2,36 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AI Virtual Teacher - Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="light-theme">
   <div class="theme-toggle">
     <label>
-      <input type="checkbox" id="themeSwitch" />
-      Toggle Dark Mode
+      <input type="checkbox" id="themeSwitch" /> Toggle Dark Mode
     </label>
   </div>
 
-  <div class="container">
-    <h1>AI Virtual Teacher</h1>
-    <form id="loginForm">
-      <input type="email" id="email" placeholder="Enter Email" required />
-      <input type="password" id="password" placeholder="Enter Password" required />
-      <button type="submit">Login</button>
-      <p><a href="signup.html">Don't have an account? Sign up</a></p>
-      <p><a href="#" onclick="showResetForm()">Forgot Password?</a></p>
-    </form>
+  <div class="login-container">
+    <div class="login-box">
+      <h1>AI Virtual Teacher</h1>
 
-    <form id="resetForm" style="display:none;">
-      <input type="email" id="resetEmail" placeholder="Enter your Email" required />
-      <button type="button" onclick="sendResetOTP()">Send OTP</button>
-      <input type="text" id="enteredOtp" placeholder="Enter OTP" />
-      <input type="password" id="newPassword" placeholder="Enter New Password" />
-      <button type="button" onclick="resetPassword()">Reset Password</button>
-      <p><a href="#" onclick="hideResetForm()">Back to Login</a></p>
-    </form>
+      <!-- Login Form -->
+      <form id="loginForm">
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button type="submit">Login</button>
+        <p><a href="signup.html">Create Account</a> | <a href="#" onclick="showResetForm()">Forgot Password?</a></p>
+      </form>
+
+      <!-- Password Reset Form -->
+      <form id="resetForm" style="display:none;">
+        <input type="email" id="resetEmail" placeholder="Enter your Email" required />
+        <button type="button" onclick="sendResetOTP()">Send OTP</button>
+        <input type="text" id="enteredOtp" placeholder="Enter OTP" />
+        <input type="password" id="newPassword" placeholder="New Password" />
+        <button type="button" onclick="resetPassword()">Reset Password</button>
+        <p><a href="#" onclick="hideResetForm()">Back to Login</a></p>
+      </form>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="info-box">
+      <h3>Why Use This App?</h3>
+      <ul>
+        <li>Talk to your AI teacher via voice or text</li>
+        <li>Practice MCQs, HOTS & doubts instantly</li>
+        <li>Multi-language support, 24/7 access</li>
+      </ul>
+    </div>
   </div>
 
   <script src="script.js"></script>
