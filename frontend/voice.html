@@ -2,46 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Voice Mode - AI Virtual Teacher</title>
+  <title>Voice Mode - AI Teacher</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <div class="chat-container">
-    <img src="avatar.gif" alt="Avatar" class="avatar" />
-    <div id="transcript"></div>
-    <button id="startBtn">Start Speaking</button>
+<body class="light-theme">
+  <div class="container">
+    <h2>Talk to AI Teacher</h2>
+    <button id="micBtn">🎙️ Start Talking</button>
+    <div id="voiceHistory" class="reply-box" style="height: 300px; overflow-y: auto;"></div>
   </div>
 
   <script>
-    const startBtn = document.getElementById("startBtn");
-    const transcript = document.getElementById("transcript");
+    const historyBox = document.getElementById("voiceHistory");
+    const micBtn = document.getElementById("micBtn");
+    const chatKey = "voiceChatHistory";
+
+    // Load voice history
+    const past = JSON.parse(localStorage.getItem(chatKey)) || [];
+    past.forEach(({ role, text }) => {
+      const el = document.createElement("p");
+      el.textContent = `${role === 'user' ? "You" : "AI"}: ${text}`;
+      historyBox.appendChild(el);
+    });
 
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'en-US';
+    recognition.lang = "en-IN";
     recognition.interimResults = false;
 
-    startBtn.onclick = () => {
-      transcript.innerHTML = "Listening...";
+    micBtn.onclick = () => {
       recognition.start();
     };
 
-    recognition.onresult = async (event) => {
-      const userMessage = event.results[0][0].transcript;
-      transcript.innerHTML = "You: " + userMessage;
+    recognition.onresult = async (e) => {
+      const spoken = e.results[0][0].transcript;
+      const userEl = document.createElement("p");
+      userEl.textContent = "You: " + spoken;
+      historyBox.appendChild(userEl);
 
-      const response = await fetch("https://631db2fc-c507-43eb-ac0b-3f5ea1cb7f83-00-29kiedd034ze2.sisko.repl.co/", {
-        method: "POST",n
+      const response = await fetch("https://ai-virtual-teacher3.onrender.com/ask", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userMessage })
+        body: JSON.stringify({ userMessage: spoken })
       });
-
       const data = await response.json();
-      const reply = data.reply;
-      transcript.innerHTML += "<br>Teacher: " + reply;
 
-      const synth = window.speechSynthesis;
-      const utter = new SpeechSynthesisUtterance(reply);
-      synth.speak(utter);
+      const aiEl = document.createElement("p");
+      aiEl.textContent = "AI: " + data.reply;
+      historyBox.appendChild(aiEl);
+
+      const say = new SpeechSynthesisUtterance(data.reply);
+      say.lang = "en-US";
+      window.speechSynthesis.speak(say);
+
+      const log = JSON.parse(localStorage.getItem(chatKey)) || [];
+      log.push({ role: 'user', text: spoken }, { role: 'ai', text: data.reply });
+      localStorage.setItem(chatKey, JSON.stringify(log));
+
+      historyBox.scrollTop = historyBox.scrollHeight;
     };
   </script>
 </body>
