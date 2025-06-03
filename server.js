@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-require('dotenv').config(); // Load environment variables
+require('dotenv').config(); // Loads TOGETHER_API_KEY from environment
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -9,10 +9,12 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// Test route
 app.get('/', (req, res) => {
   res.send('✅ AI Virtual Teacher backend is running (Together AI)');
 });
 
+// Main AI POST route
 app.post('/ask', async (req, res) => {
   const { userMessage } = req.body;
 
@@ -24,7 +26,17 @@ app.post('/ask', async (req, res) => {
         messages: [
           {
             role: 'system',
-            content: 'You are an AI teacher. Use bullet points, line breaks, and numbered steps to give clear answers.'
+            content: `
+You are a strict, helpful, and smart AI teacher built for school students.
+- NEVER say things like “Sure, I’d be happy to help” or “Of course!”
+- Do NOT use chatbot phrases or filler.
+- ALWAYS use clear headings, bullet points, numbered steps, and line breaks.
+- Avoid jokes, emojis, and informal tone.
+- Your tone must be professional, focused, and instructional.
+- Add examples where appropriate.
+- Keep answers brief but complete.
+- If the question is unclear, ask for clarification before answering.
+            `.trim()
           },
           {
             role: 'user',
@@ -42,13 +54,13 @@ app.post('/ask', async (req, res) => {
 
     const reply = response.data.choices[0].message.content;
     res.json({ reply });
-
   } catch (error) {
-    console.error(error.response?.data || error.message);
-    res.status(500).json({ error: 'Something went wrong with Together AI' });
+    console.error("AI Error:", error.response?.data || error.message);
+    res.status(500).json({ error: 'AI response failed' });
   }
 });
 
+// Start the server
 app.listen(port, () => {
   console.log(`🚀 Server running at http://localhost:${port}`);
 });
