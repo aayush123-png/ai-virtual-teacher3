@@ -1,13 +1,17 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-require('dotenv').config();
+require('dotenv').config(); // Load environment variables
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.send('✅ AI Virtual Teacher backend is running (Together AI)');
+});
 
 app.post('/ask', async (req, res) => {
   const { userMessage } = req.body;
@@ -20,7 +24,7 @@ app.post('/ask', async (req, res) => {
         messages: [
           {
             role: 'system',
-            content: "You are an AI teacher. Give structured answers using bullets, line breaks, and step-by-step format."
+            content: 'You are an AI teacher. Use bullet points, line breaks, and numbered steps to give clear answers.'
           },
           {
             role: 'user',
@@ -39,12 +43,12 @@ app.post('/ask', async (req, res) => {
     const reply = response.data.choices[0].message.content;
     res.json({ reply });
 
-  } catch (err) {
-    console.error(err.response?.data || err.message);
-    res.status(500).json({ error: 'Error contacting Together AI' });
+  } catch (error) {
+    console.error(error.response?.data || error.message);
+    res.status(500).json({ error: 'Something went wrong with Together AI' });
   }
 });
 
 app.listen(port, () => {
-  console.log(`✅ Backend running on http://localhost:${port}`);
+  console.log(`🚀 Server running at http://localhost:${port}`);
 });
