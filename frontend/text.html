@@ -2,57 +2,68 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Text Chat - AI Teacher</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Text Chat - AI Virtual Teacher</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body class="light-theme">
+<body>
   <div class="container">
-    <h2>Chat with AI Teacher</h2>
-    <div id="chatHistory" class="reply-box" style="height: 300px; overflow-y: auto;"></div>
+    <h2>Text Chat with AI Teacher</h2>
+
+    <div id="chatBox" class="chat-box"></div>
+
     <form id="textForm">
-      <input type="text" id="question" placeholder="Ask your question..." required />
+      <input type="text" id="userText" placeholder="Type your question..." required />
       <button type="submit">Send</button>
     </form>
   </div>
 
   <script>
-    const chatBox = document.getElementById("chatHistory");
-    const chatKey = "textChatHistory";
+    const chatBox = document.getElementById("chatBox");
+    const chatKey = "textHistory";
 
-    // Load old chat
-    const old = JSON.parse(localStorage.getItem(chatKey)) || [];
-    old.forEach(({ role, text }) => {
-      const el = document.createElement("p");
-      el.textContent = `${role === 'user' ? "You" : "AI"}: ${text}`;
-      chatBox.appendChild(el);
+    // Load past chat from localStorage
+    const history = JSON.parse(localStorage.getItem(chatKey)) || [];
+    history.forEach(({ role, text }) => {
+      const formatted = text.replace(/\n/g, "<br>");
+      const p = document.createElement("p");
+      p.innerHTML = `<b>${role === 'user' ? "You" : "AI"}:</b><br>${formatted}`;
+      chatBox.appendChild(p);
     });
 
-    document.getElementById("textForm").onsubmit = async function(e) {
+    // Handle form submit
+    document.getElementById("textForm").addEventListener("submit", async function(e) {
       e.preventDefault();
-      const input = document.getElementById("question").value;
-      const userLine = document.createElement("p");
-      userLine.textContent = "You: " + input;
-      chatBox.appendChild(userLine);
+      const input = document.getElementById("userText").value;
 
-      const res = await fetch("https://ai-virtual-teacher3.onrender.com/ask", {
+      // Display user message
+      const pUser = document.createElement("p");
+      pUser.innerHTML = `<b>You:</b><br>${input}`;
+      chatBox.appendChild(pUser);
+
+      // Send message to backend
+      const res = await fetch("https://teacher-for-free-a-i.onrender.com/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userMessage: input })
       });
+
       const data = await res.json();
+      const reply = data.reply || "Sorry, no response from AI.";
 
-      const aiLine = document.createElement("p");
-      aiLine.textContent = "AI: " + data.reply;
-      chatBox.appendChild(aiLine);
+      // Format AI reply
+      const formattedReply = reply.replace(/\n/g, "<br>");
+      const pAI = document.createElement("p");
+      pAI.innerHTML = `<b>AI:</b><br>${formattedReply}`;
+      chatBox.appendChild(pAI);
 
-      // Save both lines to history
-      const history = JSON.parse(localStorage.getItem(chatKey)) || [];
-      history.push({ role: 'user', text: input }, { role: 'ai', text: data.reply });
+      // Save to history
+      history.push({ role: "user", text: input }, { role: "ai", text: reply });
       localStorage.setItem(chatKey, JSON.stringify(history));
 
+      // Clear input & scroll
+      document.getElementById("userText").value = "";
       chatBox.scrollTop = chatBox.scrollHeight;
-      document.getElementById("question").value = "";
-    };
+    });
   </script>
 </body>
 </html>
